@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title></title>
+        <script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+       <form>
+            <select id="SelectTorneos">
+                    <option value="" disabled selected>Seleccione un torneo...</option>  
+            </select>
+            <select id="SelectCategorias"> 
+                    <option value="" disabled selected>Elegir Categoria</option>  
+            </select>
+            <button>Puntajes</button>
+        </form>
+
+    </body>
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $.ajax({
+                url: 'https://spreadsheets.google.com/feeds/cells/1i2W1oAgRQGvTk46C_lyKQjyzAH8hKqifJDT3mhwHcXM/1/public/values?alt=json&min-col=1&max-col=4&min-row=3',
+                method: 'GET',
+                success: function(response){
+                    //console.log(response.feed.entry)
+                    //console.log(response.feed)
+                    var torneos = response.feed.entry
+                    for(var i = 0; i< torneos.length; i++){
+                        var torneoJunto = torneos[i].content.$t.replace("-","")
+                        if(torneos[i].gs$cell.col == "1"){
+                            
+                           
+
+                            $('#SelectTorneos').append($('<option>',
+                                {
+                                    value :torneoJunto.replace(" ",""),
+                                    text :torneos[i].content.$t
+                                }));
+                               // console.log("Torneos" + torneos[i].gs$cell.col)
+                        }else if(torneos[i].gs$cell.col == "2"){
+                            $('#SelectCategorias').append($('<option>',
+                            {
+                                value :torneos[i].content.$t.replace("-",""),
+                                text :torneos[i].content.$t
+                            }));
+                            //console.log("Categorias" +torneos[i].gs$cell.col)
+                        }
+                        
+                    }
+
+                    var selectCategoria = document.getElementById('SelectCategorias');
+                   /** 
+                       selectCategoria.addEventListener('change', function(){
+                            var  resultCategoria = this.options[selectCategoria.selectedIndex];
+                            console.log(resultCategoria.value)
+                            function Export(a) {
+                                console.log("Argumento: " + a);
+                            }
+                            Export(selectCategoria.options.valueOf())
+                        });**/
+
+                        $(document).on('change', selectCategoria, function(event) {
+                           return $("#SelectCategorias option:selected").text()
+                        });
+                       
+                       
+
+                }
+            })
+
+
+
+        })
+    
+    </script>
+    
+
+    </html>
+
+
+
