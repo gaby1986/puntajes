@@ -24,17 +24,17 @@
         <form>
             <div class="form-row">
                 <div class="col">
-                    <label>Seleccione un torneo</label>
                         <select id="SelectTorneos" class="form-control">
-                                <option value="" disabled selected>Fecha</option>  
+                                <option value="" disabled selected>Seleccione un torneo</option>  
                         </select>
                     </div>
                     <div class="col">
-                        <label>Elegir handicap</label>
-                        <select id="SelectCategorias"  class="form-control"></select>
+                        <select id="SelectCategorias"  class="form-control">
+                            <option value="" disabled selected>Elegir handicap...</option>
+                        </select>
                     </div>   
             </div>
-            <button id="verPuntajes" class="btn btn-primary" type="button">Ver puntajes</button>
+            <!--<button id="verPuntajes" class="btn btn-primary" type="button">Ver puntajes</button>-->
         </form>
             <div id="resultadosPuntajes">
                 <div class="contentPuntaje"></div>
@@ -57,23 +57,24 @@
                                     }));
                         
                         var categorias = response.feed.entry;
-                        for(var k = 0; k< categorias.length; k++){
-                            if(categorias[k].gs$cell.row == "1" && pageNumber == true){  
-                                $('#SelectCategorias').append($('<option>',
-                                    {
-                                        value :categorias[k].gs$cell.col,
-                                        text :categorias[k].content.$t,
-                                    }));
+                        function armarSelectCat(){
+                            for(var k = 0; k< categorias.length; k++){
+                                if(categorias[k].gs$cell.row == "1" && pageNumber == true){  
+                                    $('#SelectCategorias').append($('<option>',
+                                        {
+                                            value :categorias[k].gs$cell.col,
+                                            text :categorias[k].content.$t,
+                                        }));
+                                }
                             }
                         }
                        
                         function comparaCeldas(comparaPagina, comparaColum1, comparaRow){  
-                            $(".contentPuntaje").html(""); 
                             if(pageNumber == comparaPagina){ 
                                 var puntajes = response.feed.entry
                                 for(var i = 0; i< puntajes.length; i++){
                                     if(puntajes[i].gs$cell.col == comparaColum1){
-                                            console.log(puntajes[i].gs$cell)
+                                            //console.log(puntajes[i].gs$cell)
                                             htmlappend +=    "<div class='row" + puntajes[i].gs$cell.row+ "'>" + puntajes[i].content.$t + "</div>";                                                                                                                                     
                                    }
                                   
@@ -86,24 +87,26 @@
                         var elijoTorne = ''                   
                         
                         $('#SelectTorneos').on('change', function() {
-                            event.preventDefault()                       
-                                htmlappend = ' ' 
-                                $(".contentPuntaje").html("");  
+                            event.preventDefault()                                                    
+                                htmlappend = ' '
                                 torneoName = this.value
-                                $('#SelectCategorias').val(' ');
+                               armarSelectCat()
+                               comparaCeldas(torneoName, handyCap, '2')
                             $('#SelectCategorias').on('change', function() {                             
                                 event.preventDefault()                               
-                                htmlappend = ' '
-                                $(".contentPuntaje").html("");
                                 elijoTorneo = $('#SelectTorneos').val();
                                 handyCap = this.value
-                                if(pageNumber == elijoTorneo){
-                                    $('#verPuntajes').one( "click",function(){
+                                if(pageNumber == elijoTorneo){                             
                                         htmlappend = ' '
                                         //Parametros:
                                         //comparaCeldas( Hoja, columna, fila)                     
                                         comparaCeldas(elijoTorneo, handyCap, '2')
-                                    });
+                                        $('#SelectTorneos').append($('<option>',
+                                        {
+                                            value :pageNumber,
+                                            text :response.feed.title.$t
+                                        }));
+                                   
                                 }
                             }) 
                         }) 
