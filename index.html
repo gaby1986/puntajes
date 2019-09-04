@@ -10,74 +10,95 @@
 
     <body>
        <form>
+           <label>Seleccione un torneo</label>
             <select id="SelectTorneos">
-                    <option value="" disabled selected>Seleccione un torneo...</option>  
+                    <option value="" disabled selected>Fecha</option>  
             </select>
+            <label>Elegir handicap</label>
             <select id="SelectCategorias"> 
-                    <option value="" disabled selected>Elegir Categoria</option>  
+                     
             </select>
-            <button>Puntajes</button>
+            <div id="verPuntajes">Ver puntajes</div>
+           
         </form>
+        <div id="resultadosPuntajes">
+            <div class="contentPuntaje"></div>
+        </div>
 
     </body>
     <script type="text/javascript">
         $(document).ready(function(){
-            
-            function paginadoSheet(pageNumber, colNumber){
+            var htmlappend = ""
+            function paginadoSheet(pageNumber){
                 $.ajax({
                     url: 'https://spreadsheets.google.com/feeds/cells/1V5POJZB7DEobhmSZyL-NIW1vMENQTdALWIjPxm3OAD4/'+ pageNumber +'/public/values?alt=json&min-col=1&max-col=8&min-row=1',
                     method: 'GET',
-                    success: function(response){
-                        //console.log(response.feed.entry)
-                        //console.log(response)
-                       // console.log(response.feed)
+                    success: function(response){                     
                         $('#SelectTorneos').append($('<option>',
                                     {
-                                        value :response.feed.title.$t,
+                                        value :pageNumber,
                                         text :response.feed.title.$t
                                     }));
                         
                         var categorias = response.feed.entry;
                         for(var k = 0; k< categorias.length; k++){
-                            if(categorias[k].gs$cell.row == "2"){  
+                            if(categorias[k].gs$cell.row == "1" && pageNumber == true){  
                                 $('#SelectCategorias').append($('<option>',
                                     {
-                                        value :categorias[k].content.$t,
+                                        value :categorias[k].gs$cell.col,
                                         text :categorias[k].content.$t,
                                     }));
                             }
                         }
-                        
+                       
                         function comparaCeldas(comparaPagina, comparaColum1, comparaRow){  
+                            $(".contentPuntaje").html(""); 
                             if(pageNumber == comparaPagina){ 
-                                //console.log(response.feed.entry.gs$cell)
-                                console.log(response.feed.title.$t)
                                 var puntajes = response.feed.entry
                                 for(var i = 0; i< puntajes.length; i++){
-                                    //console.log(puntajes[i])
                                     if(puntajes[i].gs$cell.col == comparaColum1){
-                                    if(comparaRow == puntajes[i].gs$cell.row)
-                                        continue
-                                        console.log(puntajes[i].content.$t)
-                                    }
+                                            htmlappend +=    "<div>" + puntajes[i].content.$t + "</div>"                                                                                                    
+                                   }
+                                  
                                 }
+                                $(".contentPuntaje").html("<div class='contentPuntaje2'>"+htmlappend+"</div>");
                             }
                         }
-                        var totalColumnas = ['1','2','3','4','5','6','7','8']
-                        comparaCeldas('2', '7', '2')
-                        /*for(var x = 0; x < totalColumnas.length; x ++){
-                            for(var l = 0; l < paginas.length; l ++){ 
-                                comparaCeldas(paginas[l], totalColumnas[x], '2')
-                            }
-                        }*/
+                        var handyCap = ''
+                        var torneoName = '' 
+                        var elijoTorne = ''                   
+                        
+                        $('#SelectTorneos').on('change', function() {
+                            event.preventDefault()                       
+                                htmlappend = ' ' 
+                                $(".contentPuntaje").html("");  
+                                torneoName = this.value
+                                $('#SelectCategorias').val(' ');
+                            $('#SelectCategorias').on('change', function() {                             
+                                event.preventDefault()                               
+                                htmlappend = ' '
+                                $(".contentPuntaje").html("");
+                                elijoTorneo = $('#SelectTorneos').val();
+                                handyCap = this.value
+                                if(pageNumber == elijoTorneo){
+                                    $('#verPuntajes').one( "click",function(){
+                                        htmlappend = ' '
+                                        //Parametros:
+                                        //comparaCeldas( Hoja, columna, fila)                     
+                                        comparaCeldas(elijoTorneo, handyCap, '2')
+                                    });
+                                }
+                            }) 
+                        }) 
                     }
                 })
             }
-
+           
+          
+                       
             var paginas = [1,2,3,4,5,6,7,8,9,10,11,12]
             for(var t = 0; t < paginas.length; t ++){
-                //console.log(paginas[t])
-                paginadoSheet(paginas[t])
+                    paginadoSheet(paginas[t])
             }
            
            
