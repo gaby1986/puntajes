@@ -2,30 +2,46 @@
 <html lang="es">
     <head>
         <title></title>
+        <link rel="stylesheet" href="https://www.cronista.com/system/modules/com.tfsla.diario.elcronista.v2/resources/css/elecciones/bootstrap.css">
+
         <script
   src="https://code.jquery.com/jquery-2.2.4.min.js"
   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
   crossorigin="anonymous"></script>
     </head>
-
-    <body>
-       <form>
-           <label>Seleccione un torneo</label>
-            <select id="SelectTorneos">
-                    <option value="" disabled selected>Fecha</option>  
-            </select>
-            <label>Elegir handicap</label>
-            <select id="SelectCategorias"> 
-                     
-            </select>
-            <div id="verPuntajes">Ver puntajes</div>
-           
+    <style>
+        .contentFromPuntajes{
+            width: 500px;
+            margin: 15px auto;
+        }
+        #verPuntajes{
+            display: block;
+            margin: 10px auto;
+        }
+    </style>
+<body>
+    <div class="contentFromPuntajes">
+        <form>
+            <div class="form-row">
+                <div class="col">
+                    <label>Seleccione un torneo</label>
+                        <select id="SelectTorneos" class="form-control">
+                                <option value="" disabled selected>Fecha</option>  
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label>Elegir handicap</label>
+                        <select id="SelectCategorias"  class="form-control"></select>
+                    </div>   
+            </div>
+            <button id="verPuntajes" class="btn btn-primary" type="button">Ver puntajes</button>
         </form>
-        <div id="resultadosPuntajes">
-            <div class="contentPuntaje"></div>
-        </div>
-
-    </body>
+            <div id="resultadosPuntajes">
+                <div class="contentPuntaje"></div>
+            </div>
+    </div>
+     
+</body>
     <script type="text/javascript">
         $(document).ready(function(){
             var htmlappend = ""
@@ -57,7 +73,8 @@
                                 var puntajes = response.feed.entry
                                 for(var i = 0; i< puntajes.length; i++){
                                     if(puntajes[i].gs$cell.col == comparaColum1){
-                                            htmlappend +=    "<div>" + puntajes[i].content.$t + "</div>"                                                                                                    
+                                            console.log(puntajes[i].gs$cell)
+                                            htmlappend +=    "<div class='row" + puntajes[i].gs$cell.row+ "'>" + puntajes[i].content.$t + "</div>";                                                                                                                                     
                                    }
                                   
                                 }
