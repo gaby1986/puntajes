@@ -21,59 +21,66 @@
 
     </body>
     <script type="text/javascript">
-
         $(document).ready(function(){
-            $.ajax({
-                url: 'https://spreadsheets.google.com/feeds/cells/1i2W1oAgRQGvTk46C_lyKQjyzAH8hKqifJDT3mhwHcXM/1/public/values?alt=json&min-col=1&max-col=4&min-row=3',
-                method: 'GET',
-                success: function(response){
-                    //console.log(response.feed.entry)
-                    //console.log(response.feed)
-                    var torneos = response.feed.entry
-                    for(var i = 0; i< torneos.length; i++){
-                        var torneoJunto = torneos[i].content.$t.replace("-","")
-                        if(torneos[i].gs$cell.col == "1"){
-                            
-                           
-
-                            $('#SelectTorneos').append($('<option>',
-                                {
-                                    value :torneoJunto.replace(" ",""),
-                                    text :torneos[i].content.$t
-                                }));
-                               // console.log("Torneos" + torneos[i].gs$cell.col)
-                        }else if(torneos[i].gs$cell.col == "2"){
-                            $('#SelectCategorias').append($('<option>',
-                            {
-                                value :torneos[i].content.$t.replace("-",""),
-                                text :torneos[i].content.$t
-                            }));
-                            //console.log("Categorias" +torneos[i].gs$cell.col)
+            
+            function paginadoSheet(pageNumber, colNumber){
+                $.ajax({
+                    url: 'https://spreadsheets.google.com/feeds/cells/1V5POJZB7DEobhmSZyL-NIW1vMENQTdALWIjPxm3OAD4/'+ pageNumber +'/public/values?alt=json&min-col=1&max-col=8&min-row=1',
+                    method: 'GET',
+                    success: function(response){
+                        //console.log(response.feed.entry)
+                        //console.log(response)
+                       // console.log(response.feed)
+                        $('#SelectTorneos').append($('<option>',
+                                    {
+                                        value :response.feed.title.$t,
+                                        text :response.feed.title.$t
+                                    }));
+                        
+                        var categorias = response.feed.entry;
+                        for(var k = 0; k< categorias.length; k++){
+                            if(categorias[k].gs$cell.row == "2"){  
+                                $('#SelectCategorias').append($('<option>',
+                                    {
+                                        value :categorias[k].content.$t,
+                                        text :categorias[k].content.$t,
+                                    }));
+                            }
                         }
                         
-                    }
-
-                    var selectCategoria = document.getElementById('SelectCategorias');
-                   /** 
-                       selectCategoria.addEventListener('change', function(){
-                            var  resultCategoria = this.options[selectCategoria.selectedIndex];
-                            console.log(resultCategoria.value)
-                            function Export(a) {
-                                console.log("Argumento: " + a);
+                        function comparaCeldas(comparaPagina, comparaColum1, comparaRow){  
+                            if(pageNumber == comparaPagina){ 
+                                //console.log(response.feed.entry.gs$cell)
+                                console.log(response.feed.title.$t)
+                                var puntajes = response.feed.entry
+                                for(var i = 0; i< puntajes.length; i++){
+                                    //console.log(puntajes[i])
+                                    if(puntajes[i].gs$cell.col == comparaColum1){
+                                    if(comparaRow == puntajes[i].gs$cell.row)
+                                        continue
+                                        console.log(puntajes[i].content.$t)
+                                    }
+                                }
                             }
-                            Export(selectCategoria.options.valueOf())
-                        });**/
+                        }
+                        var totalColumnas = ['1','2','3','4','5','6','7','8']
+                        comparaCeldas('2', '7', '2')
+                        /*for(var x = 0; x < totalColumnas.length; x ++){
+                            for(var l = 0; l < paginas.length; l ++){ 
+                                comparaCeldas(paginas[l], totalColumnas[x], '2')
+                            }
+                        }*/
+                    }
+                })
+            }
 
-                        $(document).on('change', selectCategoria, function(event) {
-                           return $("#SelectCategorias option:selected").text()
-                        });
-                       
-                       
-
-                }
-            })
-
-
+            var paginas = [1,2,3,4,5,6,7,8,9,10,11,12]
+            for(var t = 0; t < paginas.length; t ++){
+                //console.log(paginas[t])
+                paginadoSheet(paginas[t])
+            }
+           
+           
 
         })
     
