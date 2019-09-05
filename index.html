@@ -56,13 +56,33 @@
                 <div class="col">
                         <label>Torneos</label>
                         <select id="SelectTorneos" class="form-control">
-                                <option value="" disabled selected>Seleccione un torneo...</option>  
+                            <option value="" disabled selected>Seleccione un torneo...</option> 
+							<option value="1" >21 Marzo - Pilar Golf </option>
+							<option value="2" >04 Abril - Los Pingüinos CC</option>
+							<option value="3" >25 Abril - Olivos GC</option>
+							<option value="4" >09 Mayo - Highland Park CC </option>
+							<option value="5" >30 Mayo - Tortugas CC </option>
+							<option value="6" >13 Junio - Abril CC </option>
+							<option value="7" >27 Junio - Los Lagartos CC</option>
+							<option value="8" >11 Julio - Cañuelas GC </option>
+							<option value="9" >25 Julio - Olivos GC</option>
+							<option value="10" >15 Agosto - Estancias GC</option>
+							<option value="11" >29 Agosto - Tortugas GC</option>
+							<option value="12" >12 Septiembre - Abril CC </option>
+							<option value="12" >19 Septiembre - Los Pingüinos CC </option>
+							<option value="14" >03 Octubre - Los Lagartos CC</option>
+							<option value="15" >17 Octubre - Tortugas GC </option>
+							<option value="17" >31 Octubre - Highland Park CC</option>
+							<option value="18" >14 Noviembre - Estancias GC</option>
+							<option value="19" >28 Noviembre - Los Pingüinos CC </option>
+							<option value="20" >12 Diciembre - FINAL - Olivos GC (a confirmar)</option>
                         </select>
                     </div>
                     <div class="col">
                         <label>Categorias</label>
                         <select id="SelectCategorias"  class="form-control">
                             <option value="" disabled selected>Elegir handicap...</option>
+							
                         </select>
                     </div>   
             </div>
@@ -86,25 +106,13 @@
                     method: 'GET',
                     success: function(response){                     
                        
-                                var testA = response.feed.id.$t
-                                var test = pageNumber
-                                var barritas = '/' + pageNumber + '/'
-                                var cadena = testA.slice(89,-14)
-                                array1.push(cadena)
-                                //console.log(array1.push(cadena)) 
-                                if(pageNumber == '19'){
-                                    //console.log(array1[0])
-                                    for(var z = 0; z<array1.length; z++){
-                                        console.log(array1[z])
-                                    }                                
-                                                
-                                }
+                               
 
-                       $('#SelectTorneos').append($('<option>',
+                       /**$('#SelectTorneos').append($('<option>',
                                     {
                                         value :pageNumber,
                                         text :response.feed.title.$t
-                                    }));
+                                    }));**/
                        
                                 function armarSelectCat(){                   
                                         $('#SelectCategorias').html('');
@@ -137,7 +145,7 @@
                         var torneoName = '' 
                         var elijoTorne = ''                   
                         $('#SelectTorneos').on('click', function() {
-                            selctLimpiar = ''
+                            selctLimpiar = '<option>Elegir handicap</option>'
                         });
                         $('#SelectTorneos').on('change', function() {
                             event.preventDefault()                                                    
