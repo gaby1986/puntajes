@@ -78,40 +78,33 @@
     <script type="text/javascript">
         $(document).ready(function(){
             var htmlappend = ""
+            var selctLimpiar = ""
             function paginadoSheet(pageNumber){
                 $.ajax({
                     url: 'https://spreadsheets.google.com/feeds/cells/1V5POJZB7DEobhmSZyL-NIW1vMENQTdALWIjPxm3OAD4/'+ pageNumber +'/public/values?alt=json&min-col=1&max-col=8&min-row=1',
                     method: 'GET',
                     success: function(response){                     
                         
-                        console.log(response.feed.id.$t)
-                        var arrayObj=response.feed.id.$t
-                        var element = '/'+ pageNumber + '/';
-                        var idx = arrayObj.indexOf(element,element);
-                        var separador = ""
-                      
-                        var arregloDeSubCadenas = pageNumber.split(separador);
-                        
-                        console.log(arregloDeSubCadenas[89])
-                        
-                        
+                       
                         $('#SelectTorneos').append($('<option>',
                                     {
                                         value :pageNumber,
                                         text :response.feed.title.$t
                                     }));
                        
-                        function armarSelectCat(){
-                            for(var k = 0; k< categorias.length; k++){
-                                if(categorias[k].gs$cell.row == "1" && pageNumber == true){  
-                                    $('#SelectCategorias').append($('<option>',
-                                        {
-                                            value :categorias[k].gs$cell.col,
-                                            text :categorias[k].content.$t,
-                                        }));
+                                function armarSelectCat(){                   
+                                        $('#SelectCategorias').html('');
+                                    categorias = response.feed.entry;
+                                    for(var k = 0; k< categorias.length; k++){                             
+                                        if(categorias[k].gs$cell.row == "1" && pageNumber == true){  
+                                            
+                                            selctLimpiar += "<option value="+ categorias[k].gs$cell.col + ">" + categorias[k].content.$t + "</option>"
+                                            
+                                        }
+                                    }
+                                    $('#SelectCategorias').html(selctLimpiar);
                                 }
-                            }
-                        }
+                        
                        
                         function comparaCeldas(comparaPagina, comparaColum1, comparaRow){  
                             if(pageNumber == comparaPagina){ 
@@ -129,7 +122,9 @@
                         var handyCap = ''
                         var torneoName = '' 
                         var elijoTorne = ''                   
-                      
+                        $('#SelectTorneos').on('click', function() {
+                            selctLimpiar = ''
+                        });
                         $('#SelectTorneos').on('change', function() {
                             event.preventDefault()                                                    
                                 htmlappend = ' '
@@ -143,10 +138,12 @@
                                 handyCap = this.value
                                 if(pageNumber == elijoTorneo){                             
                                         htmlappend = ' '
+                                        selctLimpiar = ''
                                         //Parametros:
                                         //comparaCeldas( Hoja, columna, fila)                     
                                         comparaCeldas(elijoTorneo, handyCap, '2')
-                                      
+                                        selctLimpiar = ''
+
                                 }
                             }) 
                         }) 
@@ -162,19 +159,15 @@
                 }
             })
                        
-            var paginas = [1,2,3,4,5,6,7,8,9,10,11,12]
+            var paginas = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
             for(var t = 0; t < paginas.length; t ++){
                     paginadoSheet(paginas[t])
             }
            
            
-
         })
     
     </script>
     
 
     </html>
-
-
-
