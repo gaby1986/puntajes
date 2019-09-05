@@ -55,34 +55,14 @@
             <div class="form-row">
                 <div class="col">
                         <label>Torneos</label>
-                        <select id="SelectTorneos" class="form-control">
-                            <option value="" disabled selected>Seleccione un torneo...</option> 
-							<option value="1" >21 Marzo - Pilar Golf </option>
-							<option value="2" >04 Abril - Los Pingüinos CC</option>
-							<option value="3" >25 Abril - Olivos GC</option>
-							<option value="4" >09 Mayo - Highland Park CC </option>
-							<option value="5" >30 Mayo - Tortugas CC </option>
-							<option value="6" >13 Junio - Abril CC </option>
-							<option value="7" >27 Junio - Los Lagartos CC</option>
-							<option value="8" >11 Julio - Cañuelas GC </option>
-							<option value="9" >25 Julio - Olivos GC</option>
-							<option value="10" >15 Agosto - Estancias GC</option>
-							<option value="11" >29 Agosto - Tortugas GC</option>
-							<option value="12" >12 Septiembre - Abril CC </option>
-							<option value="12" >19 Septiembre - Los Pingüinos CC </option>
-							<option value="14" >03 Octubre - Los Lagartos CC</option>
-							<option value="15" >17 Octubre - Tortugas GC </option>
-							<option value="17" >31 Octubre - Highland Park CC</option>
-							<option value="18" >14 Noviembre - Estancias GC</option>
-							<option value="19" >28 Noviembre - Los Pingüinos CC </option>
-							<option value="20" >12 Diciembre - FINAL - Olivos GC (a confirmar)</option>
+                        <select id="SelectTorneos" name="SelectTorneos" class="form-control">
+                                <option value="" disabled selected>Seleccione un torneo...</option>  
                         </select>
                     </div>
                     <div class="col">
                         <label>Categorias</label>
                         <select id="SelectCategorias"  class="form-control">
                             <option value="" disabled selected>Elegir handicap...</option>
-							
                         </select>
                     </div>   
             </div>
@@ -106,14 +86,30 @@
                     method: 'GET',
                     success: function(response){                     
                        
-                               
-
-                       /**$('#SelectTorneos').append($('<option>',
+                                function ordenar(){
+									vec=document.getElementById('SelectTorneos').options;
+									tmp=new Array();
+									for(i=0;i<vec.length;i++){
+									tmp.push(vec[i].value+'separator'+vec[i].text);
+									}
+									tmp2=tmp.sort();
+									console.log(tmp2)
+									document.getElementById('SelectTorneos').length=0;
+									for(i=0;i<tmp2.length;i++){
+									aux=tmp2[i].split('separator');
+									console.log(aux)
+									document.getElementById('SelectTorneos').options[i]=new Option(aux[1],aux[0]);
+									}
+								}
+									ordenar()
+								
+								
+                       $('#SelectTorneos').append($('<option>',
                                     {
                                         value :pageNumber,
                                         text :response.feed.title.$t
-                                    }));**/
-                       
+                                    }));
+                       								
                                 function armarSelectCat(){                   
                                         $('#SelectCategorias').html('');
                                     categorias = response.feed.entry;
@@ -145,7 +141,7 @@
                         var torneoName = '' 
                         var elijoTorne = ''                   
                         $('#SelectTorneos').on('click', function() {
-                            selctLimpiar = '<option>Elegir handicap</option>'
+                            selctLimpiar = ''
                         });
                         $('#SelectTorneos').on('change', function() {
                             event.preventDefault()                                                    
@@ -165,10 +161,10 @@
                                         //comparaCeldas( Hoja, columna, fila)                     
                                         comparaCeldas(elijoTorneo, handyCap, '2')
                                         selctLimpiar = ''
-
                                 }
                             }) 
                         }) 
+						
                     }
                 })
             }
