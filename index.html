@@ -10,13 +10,43 @@
   crossorigin="anonymous"></script>
     </head>
     <style>
+ 
+        #SelectCategorias:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: transparent;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgb(243, 133, 133);
+        }
+        .form-control:focus,   #SelectCategorias.active:focus{
+            color: #495057;
+            background-color: #fff;
+            border-color: transparent;
+            outline: 0;
+            box-shadow: none;
+        }
         .contentFromPuntajes{
             width: 500px;
             margin: 15px auto;
+            background-color: #f5f5f5;
+            padding: 10px;
         }
         #verPuntajes{
             display: block;
             margin: 10px auto;
+        }
+        .errorMensaje{
+            text-align: center;
+            margin: 5px auto;
+            color: #f00;
+            font-weight: 700;
+        }
+        .row1{
+            text-align: center;
+            margin: 10px -10px;
+            background-color: #359998;
+            font-size: 20px;
+            color: #fff;
         }
     </style>
 <body>
@@ -24,11 +54,13 @@
         <form>
             <div class="form-row">
                 <div class="col">
+                        <label>Torneos</label>
                         <select id="SelectTorneos" class="form-control">
-                                <option value="" disabled selected>Seleccione un torneo</option>  
+                                <option value="" disabled selected>Seleccione un torneo...</option>  
                         </select>
                     </div>
                     <div class="col">
+                        <label>Categorias</label>
                         <select id="SelectCategorias"  class="form-control">
                             <option value="" disabled selected>Elegir handicap...</option>
                         </select>
@@ -38,6 +70,7 @@
         </form>
             <div id="resultadosPuntajes">
                 <div class="contentPuntaje"></div>
+                <div class="errorMensaje" style="display: none">Debe elegir un torneo antes</div>
             </div>
     </div>
      
@@ -50,13 +83,24 @@
                     url: 'https://spreadsheets.google.com/feeds/cells/1V5POJZB7DEobhmSZyL-NIW1vMENQTdALWIjPxm3OAD4/'+ pageNumber +'/public/values?alt=json&min-col=1&max-col=8&min-row=1',
                     method: 'GET',
                     success: function(response){                     
+                        
+                        console.log(response.feed.id.$t)
+                        var arrayObj=response.feed.id.$t
+                        var element = '/'+ pageNumber + '/';
+                        var idx = arrayObj.indexOf(element,element);
+                        var separador = ""
+                      
+                        var arregloDeSubCadenas = pageNumber.split(separador);
+                        
+                        console.log(arregloDeSubCadenas[89])
+                        
+                        
                         $('#SelectTorneos').append($('<option>',
                                     {
                                         value :pageNumber,
                                         text :response.feed.title.$t
                                     }));
-                        
-                        var categorias = response.feed.entry;
+                       
                         function armarSelectCat(){
                             for(var k = 0; k< categorias.length; k++){
                                 if(categorias[k].gs$cell.row == "1" && pageNumber == true){  
@@ -85,15 +129,16 @@
                         var handyCap = ''
                         var torneoName = '' 
                         var elijoTorne = ''                   
-                        
+                      
                         $('#SelectTorneos').on('change', function() {
                             event.preventDefault()                                                    
                                 htmlappend = ' '
                                 torneoName = this.value
                                armarSelectCat()
                                comparaCeldas(torneoName, handyCap, '2')
+                               $('#SelectCategorias').addClass('active')
                             $('#SelectCategorias').on('change', function() {                             
-                                event.preventDefault()                               
+                                event.preventDefault()                                                           
                                 elijoTorneo = $('#SelectTorneos').val();
                                 handyCap = this.value
                                 if(pageNumber == elijoTorneo){                             
@@ -101,12 +146,7 @@
                                         //Parametros:
                                         //comparaCeldas( Hoja, columna, fila)                     
                                         comparaCeldas(elijoTorneo, handyCap, '2')
-                                        $('#SelectTorneos').append($('<option>',
-                                        {
-                                            value :pageNumber,
-                                            text :response.feed.title.$t
-                                        }));
-                                   
+                                      
                                 }
                             }) 
                         }) 
@@ -114,7 +154,13 @@
                 })
             }
            
-          
+            $('#SelectCategorias').click(function(){
+                if($('#SelectCategorias').hasClass('active')){
+                    $(".errorMensaje").css("display", "none")
+                }else{
+                    $(".errorMensaje").css("display", "block")
+                }
+            })
                        
             var paginas = [1,2,3,4,5,6,7,8,9,10,11,12]
             for(var t = 0; t < paginas.length; t ++){
