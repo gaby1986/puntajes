@@ -79,14 +79,28 @@
         $(document).ready(function(){
             var htmlappend = ""
             var selctLimpiar = ""
+            var array1=[]
             function paginadoSheet(pageNumber){
                 $.ajax({
                     url: 'https://spreadsheets.google.com/feeds/cells/1V5POJZB7DEobhmSZyL-NIW1vMENQTdALWIjPxm3OAD4/'+ pageNumber +'/public/values?alt=json&min-col=1&max-col=8&min-row=1',
                     method: 'GET',
                     success: function(response){                     
-                        
                        
-                        $('#SelectTorneos').append($('<option>',
+                                var testA = response.feed.id.$t
+                                var test = pageNumber
+                                var barritas = '/' + pageNumber + '/'
+                                var cadena = testA.slice(89,-14)
+                                array1.push(cadena)
+                                //console.log(array1.push(cadena)) 
+                                if(pageNumber == '19'){
+                                    //console.log(array1[0])
+                                    for(var z = 0; z<array1.length; z++){
+                                        console.log(array1[z])
+                                    }                                
+                                                
+                                }
+
+                       $('#SelectTorneos').append($('<option>',
                                     {
                                         value :pageNumber,
                                         text :response.feed.title.$t
